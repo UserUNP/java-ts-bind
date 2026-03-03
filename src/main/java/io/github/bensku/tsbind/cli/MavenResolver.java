@@ -113,19 +113,30 @@ public class MavenResolver {
 	}
 	
 	private String getLatestVersion(String group, String artifact) throws IOException, InterruptedException {
-		// Try each repo in order they were specified
-		for (String repo : repos) {
-			URI uri = URI.create(repo + "/" + group.replace('.', '/')
-					+ "/" + artifact + "/maven-metadata.xml");
-			HttpResponse<String> response = client.send(HttpRequest.newBuilder(uri).GET().build(), BodyHandlers.ofString());
-			if (response.statusCode() == 200) {
-				Document doc = Jsoup.parse(response.body(), "", Parser.xmlParser());
-				Element metadata = doc.selectFirst("metadata");
-				Element version = metadata.selectFirst("versioning").selectFirst("release");
-				return version.text();
-			}
-		}
-		throw new ArtifactNotFoundException("cannot find artifact " + group + ":" + artifact);
+	    for (String repo : repos) {
+	        URI uri = URI.create(repo + "/" + group.replace('.', '/') + "/" + artifact + "/maven-metadata.xml");
+	
+	        HttpResponse<String> response = client.send(HttpRequest.newBuilder(uri).GET().build(), BodyHandlers.ofString());
+	        if (response.statusCode() != 200) continue;
+	
+	        Document doc = Jsoup.parse(response.body(), "", Parser.xmlParser());
+	        Element metadata = doc.selectFirst("metadata");
+	        if (metadata == null) continue;
+	
+	        Element versioning = metadata.selectFirst("versioning");
+	        if (versioning == null) continue;
+	
+	        Element release = versioning.selectFirst("release");
+	        if (release != null && !release.text().isEmpty()) return release.text()
+			
+	        Element latest = versioning.selectFirst("latest");
+	        if (latest != null && !latest.text().isEmpty()) return latest.text();
+	
+	        Elements versions = versioning.select("versions > version");
+	        if (!versions.isEmpty()) return versions.last().text();
+	    }
+	
+	    throw new ArtifactNotFoundException("cannot determine latest version for " + group + ":" + artifact);
 	}
 	
 	/**
