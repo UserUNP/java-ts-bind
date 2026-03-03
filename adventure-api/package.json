@@ -8,7 +8,7 @@
       "https://repo.papermc.io/repository/maven-public/"
     ],
     "artifact": [
-      "net.kyori:adventure-api:4.22.0"
+      "net.kyori:adventure-api:4.26.1"
     ],
     "index": true,
     "out": "adventure-api"
