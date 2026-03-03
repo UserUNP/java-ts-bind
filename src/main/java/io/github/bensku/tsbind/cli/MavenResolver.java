@@ -127,7 +127,7 @@ public class MavenResolver {
 	        if (versioning == null) continue;
 	
 	        Element release = versioning.selectFirst("release");
-	        if (release != null && !release.text().isEmpty()) return release.text()
+	        if (release != null && !release.text().isEmpty()) return release.text();
 			
 	        Element latest = versioning.selectFirst("latest");
 	        if (latest != null && !latest.text().isEmpty()) return latest.text();
