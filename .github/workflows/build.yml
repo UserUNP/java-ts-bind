@@ -40,10 +40,10 @@ jobs:
         run: java -jar build/libs/java-ts-bind-all.jar --packageJson httpclient-types/package.json
 
       - name: "📝 Generate Paper types"
-        run: java -jar build/libs/java-ts-bind-all.jar  --index --repo https://repo.papermc.io/repository/maven-public/ --artifact io.papermc.paper:paper-api:${{ github.event.inputs.version }} --out paper
+        run: java -jar build/libs/java-ts-bind-all.jar  --index --repo https://repo.papermc.io/repository/maven-public --artifact io.papermc.paper:paper-api:${{ github.event.inputs.version }} --out paper
       
       - name: "📝 Generate Adventure API types"
-        run: java -jar build/libs/java-ts-bind-all.jar  --index --repo https://repo.papermc.io/repository/maven-public/ --artifact net.kyori:adventure-api:4.26.1 --out adventure-api
+        run: java -jar build/libs/java-ts-bind-all.jar  --index --repo https://repo.papermc.io/repository/maven-public --artifact net.kyori:adventure-api:4.26.1 --out adventure-api
 
       - name: "📦 Prepare release content"
         run: |
