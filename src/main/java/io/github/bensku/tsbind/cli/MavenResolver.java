@@ -57,13 +57,13 @@ public class MavenResolver {
 			HttpResponse<String> response = client.send(HttpRequest.newBuilder(uri).GET().build(), BodyHandlers.ofString());
 			if (response.statusCode() == 200) {
 				// Got a response, let's hope it is valid XML
-				return getSnapshotUrl(repo, response.body());
+				return getSnapshotUrl(repo, response.body(), version);
 			}
 		}
 		throw new ArtifactNotFoundException("cannot find artifact " + group + ":" + artifact + ":" + version);
 	}
 	
-	private String getSnapshotUrl(String repo, String metadataStr) {
+	private String getSnapshotUrl(String repo, String metadataStr, String requestedVersion) {
 		Document doc = Jsoup.parse(metadataStr, "", Parser.xmlParser());
 		Element metadata = doc.selectFirst("metadata");
 		Elements snapshots = metadata.selectFirst("versioning")
@@ -86,7 +86,7 @@ public class MavenResolver {
 		// Create download URL for source jar
 		String group = metadata.selectFirst("groupId").text();
 		String artifact = metadata.selectFirst("artifactId").text();
-		String version = metadata.selectFirst("version").text();
+		String version = requestedVersion;
 		System.out.println("Found snapshot version " + repo + "/" + group.replace('.', '/')
 				+ "/" + artifact + "/" + version
 				+ "/" + artifact + "-" + snapshotVersion);
